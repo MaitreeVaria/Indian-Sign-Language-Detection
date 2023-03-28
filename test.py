@@ -87,6 +87,12 @@ with mp_hands.Hands(
         landmark_list = calc_landmark_list(debug_image, hand_landmarks)
         # Conversion to relative coordinates / normalized coordinates
         pre_processed_landmark_list = pre_process_landmark(landmark_list)
+         # Get the coordinates of the hand landmarks
+        landmark_x = [landmark.x for landmark in hand_landmarks.landmark]
+        landmark_y = [landmark.y for landmark in hand_landmarks.landmark]
+        xmin, xmax = int(min(landmark_x) * image.shape[1]), int(max(landmark_x) * image.shape[1])
+        ymin, ymax = int(min(landmark_y) * image.shape[0]), int(max(landmark_y) * image.shape[0])
+
         # mp_drawing.draw_landmarks(
         #     image,
         #     hand_landmarks,
@@ -97,16 +103,19 @@ with mp_hands.Hands(
         # print(len(pre_processed_landmark_list))
         df = pd.DataFrame(pre_processed_landmark_list).transpose()
 
-        predictions = model.predict(df)
+        predictions = model.predict(df, verbose = 0)
         # # get the predicted class for each sample
         predicted_classes = np.argmax(predictions, axis=1)
         # print(max(predictions[0]))
         # entropy = -np.sum(predictions * np.log2(predictions), axis=1)
         # if entropy <= 0.001:
         # print the predicted classes
+                # Draw a bounding box around the hand
+        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+        label = alphabet[predicted_classes[0]]
+        cv2.putText(image, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         print(alphabet[predicted_classes[0]])
-      
-
+        print("------------------------")
     # Flip the image horizontally for a selfie-view display.
     cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
     if cv2.waitKey(5) & 0xFF == 27:
