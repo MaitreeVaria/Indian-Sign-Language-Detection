@@ -12,7 +12,6 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-# dict = {0:'A',1:'B',2:'C'}
 alphabet =  ['1','2','3','4','5','6','7','8','9']
 alphabet += list(string.ascii_uppercase)
 # functions
@@ -25,7 +24,7 @@ def calc_landmark_list(image, landmarks):
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
+
 
         landmark_point.append([landmark_x, landmark_y])
 
@@ -82,39 +81,38 @@ with mp_hands.Hands(
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     debug_image = copy.deepcopy(image)
-
+    xmin, ymin, xmax, ymax = image.shape[1], image.shape[0], 0, 0
     if results.multi_hand_landmarks:
       for hand_landmarks, handedness in zip(results.multi_hand_landmarks,results.multi_handedness):
         landmark_list = calc_landmark_list(debug_image, hand_landmarks)
         # Conversion to relative coordinates / normalized coordinates
         pre_processed_landmark_list = pre_process_landmark(landmark_list)
-         # Get the coordinates of the hand landmarks
+
+ 
+        # Get the coordinates of the hand landmarks
         landmark_x = [landmark.x for landmark in hand_landmarks.landmark]
         landmark_y = [landmark.y for landmark in hand_landmarks.landmark]
-        xmin, xmax = int(min(landmark_x) * image.shape[1]), int(max(landmark_x) * image.shape[1])
-        ymin, ymax = int(min(landmark_y) * image.shape[0]), int(max(landmark_y) * image.shape[0])
+        x, y, w, h = int(min(landmark_x) * image.shape[1]), int(min(landmark_y) * image.shape[0]), \
+                     int((max(landmark_x) - min(landmark_x)) * image.shape[1]), \
+                     int((max(landmark_y) - min(landmark_y)) * image.shape[0])
+        # Update the bounding box coordinates to include both hands
+        xmin, ymin = min(xmin, x), min(ymin, y)
+        xmax, ymax = max(xmax, x + w), max(ymax, y + h)
 
-        # mp_drawing.draw_landmarks(
-        #     image,
-        #     hand_landmarks,
-        #     mp_hands.HAND_CONNECTIONS,
-        #     mp_drawing_styles.get_default_hand_landmarks_style(),
-        #     mp_drawing_styles.get_default_hand_connections_style())
-        # print(pre_processed_landmark_list)
-        # print(len(pre_processed_landmark_list))
+        # Draw a bounding box around both hands
+        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+
+    
+    
         df = pd.DataFrame(pre_processed_landmark_list).transpose()
 
         predictions = model.predict(df, verbose = 0)
-        # # get the predicted class for each sample
         predicted_classes = np.argmax(predictions, axis=1)
-        # print(max(predictions[0]))
-        # entropy = -np.sum(predictions * np.log2(predictions), axis=1)
-        # if entropy <= 0.001:
-        # print the predicted classes
-                # Draw a bounding box around the hand
-        cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
         label = alphabet[predicted_classes[0]]
-        cv2.putText(image, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        global frame 
+        frame = cv2.flip(image, 1)
+        # Write the hand prediction label on top of the bounding box
+        cv2.putText(frame, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         print(alphabet[predicted_classes[0]])
         print("------------------------")
     # Flip the image horizontally for a selfie-view display.
