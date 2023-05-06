@@ -44,7 +44,7 @@ To run this project, you will need the following dependencies:
 3. Run the following command to start the program:
 
    ```
-   python isl_mediapipe.py
+   python isl_detection.py
    ```
 
 4. The program will start and display the video stream from the webcam.
@@ -58,6 +58,14 @@ The program uses the Mediapipe library to detect landmarks on the hand and finge
 During execution, the program uses the webcam to capture video frames, applies the Mediapipe hand detection model to detect the hand in each frame, and extracts the hand landmarks. The extracted landmarks are then passed to the classification model, which predicts the class of the hand gesture. The predicted class is displayed on the video stream in real-time.
 
 ![Process image](images/process.png)
+
+## File Descriptions
+
+- `isl_detection.py`: This file is the main python file for real-time ISL detection.
+- `dataset_keypoint_generation.py`: This file converts [ISL kaggle image dataset](https://www.kaggle.com/datasets/prathumarikeri/indian-sign-language-isl) to 42 landmarks.
+- `keypoint.csv`: This file contains the 42 landmarks for all images.
+- `ISL_classifier.ipynb`: The notebook is used to create a classifier model to classify the hand gestures.
+- `model.h5`: This is the classifier model.
 
 ### Examples
 ![example image 1](images/example1.png)
