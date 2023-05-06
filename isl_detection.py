@@ -8,7 +8,7 @@ import pandas as pd
 import string
 
 # load the saved model from file
-model = keras.models.load_model("model_alldatatest6.h5")
+model = keras.models.load_model("model.h5")
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
