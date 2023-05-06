@@ -14,7 +14,6 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-# dict = {0:'A',1:'B',2:'C'}
 alphabet =  ['1','2','3','4','5','6','7','8','9']
 alphabet += list(string.ascii_uppercase)
 # functions
