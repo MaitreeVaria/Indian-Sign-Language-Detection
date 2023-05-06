@@ -3,6 +3,7 @@
 ## Indian Sign Language Detection using Mediapipe
 
 This project is aimed at detecting and recognizing Indian Sign Language (ISL) gestures using the Mediapipe library. The project is implemented in Python.
+![All gestures covered by project](images/allGestures.png)
 
 ### Requirements
 
@@ -55,6 +56,12 @@ To run this project, you will need the following dependencies:
 The program uses the Mediapipe library to detect landmarks on the hand and fingers of the user in real-time. These landmarks are then fed into a feedforward neural network (FNN) that was trained on an Indian Sign Language (ISL) dataset from Kaggle. The FNN predicts the class of the hand gesture based on the detected landmarks.
 
 During execution, the program uses the webcam to capture video frames, applies the Mediapipe hand detection model to detect the hand in each frame, and extracts the hand landmarks. The extracted landmarks are then passed to the classification model, which predicts the class of the hand gesture. The predicted class is displayed on the video stream in real-time.
+
+![Process image](images/process.png)
+
+### Examples
+![example image 1](images/example1.png)
+![example image 2](images/example2.png)
 
 ### Future Improvements
 
